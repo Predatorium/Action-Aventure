@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class CharacterMovement : MonoBehaviour
 {
+    [SerializeField] private Animator animator = null;
     [SerializeField] private CharacterController character = null;
     [SerializeField] private float speed = 10f;
     [SerializeField] private float jumpHeight = 1f;
     private Vector3 velocity = Vector3.zero;
+    private bool jumped = false;
 
     [SerializeField] private Transform followTarget = null;
     [SerializeField] private Transform modele = null;
@@ -35,10 +37,16 @@ public class CharacterMovement : MonoBehaviour
             transform.rotation = Quaternion.Euler(0f, followTarget.eulerAngles.y, 0f);
             followTarget.localEulerAngles = new Vector3(followTarget.localEulerAngles.x, 0f, 0f);
 
-            Vector3 dir = (transform.right * move.x + transform.forward * move.z);
+            Vector3 dir = (transform.right * move.x + transform.forward * move.z).normalized;
             velocity = (dir * speed) + (Vector3.up * velocity.y);
+            animator.SetBool("Run", true);
 
             modele.LookAt(transform.position + new Vector3(dir.x, 0f, dir.z));
+        }
+        else
+        {
+            animator.SetBool("Run", false);
+            velocity = Vector3.up * velocity.y;
         }
 
         character.Move(velocity * Time.deltaTime);
@@ -46,9 +54,22 @@ public class CharacterMovement : MonoBehaviour
 
     private void Jump()
     {
+        if (!character.isGrounded && velocity.y < 0)
+        {
+            animator.SetTrigger("Fall");
+        }
+
+        if (character.isGrounded && jumped)
+        {
+            animator.SetTrigger("Land");
+            jumped = false;
+        }
+
         if (Input.GetButtonDown("Jump") && character.isGrounded)
         {
             velocity.y += Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y);
+            animator.SetTrigger("Jump");
+            jumped = true;
         }
     }
 
