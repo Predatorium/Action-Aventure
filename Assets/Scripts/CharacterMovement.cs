@@ -9,7 +9,6 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private float speed = 10f;
     [SerializeField] private float jumpHeight = 1f;
     private Vector3 velocity = Vector3.zero;
-    private bool jumped = false;
 
     [SerializeField] private Transform followTarget = null;
     [SerializeField] private Transform modele = null;
@@ -17,28 +16,32 @@ public class CharacterMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        Gravity();
         Jump();
         Move();
+    }
+
+    private void FixedUpdate()
+    {
+        Gravity();
     }
 
     private void Move()
     {
         Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
 
-        if (move.sqrMagnitude > 0f)
+        if (move.sqrMagnitude > 0f && !animator.GetBool("Roll"))
         {
             transform.rotation = Quaternion.Euler(0f, followTarget.eulerAngles.y, 0f);
             followTarget.localEulerAngles = new Vector3(followTarget.localEulerAngles.x, 0f, 0f);
 
             Vector3 dir = (transform.right * move.x + transform.forward * move.z).normalized;
-            velocity = (dir * speed) + (Vector3.up * velocity.y);
+            character.Move(dir * speed * Time.deltaTime);
             animator.SetBool("Run", true);
 
             modele.LookAt(transform.position + new Vector3(dir.x, 0f, dir.z));
@@ -49,27 +52,39 @@ public class CharacterMovement : MonoBehaviour
             velocity = Vector3.up * velocity.y;
         }
 
-        character.Move(velocity * Time.deltaTime);
+        if (Input.GetButtonDown("Roll"))
+            animator.SetBool("Roll", true);
+
+        if (animator.GetBool("Roll"))
+            character.Move(modele.forward * speed * Time.deltaTime);
+
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Roll") && animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
+            animator.SetBool("Roll", false);
     }
 
     private void Jump()
     {
-        if (!character.isGrounded && velocity.y < 0)
+        if (!character.isGrounded && character.velocity.y < 0)
         {
-            animator.SetTrigger("Fall");
+            animator.SetBool("Jump", false);
+            animator.SetBool("Fall", true);
         }
 
-        if (character.isGrounded && jumped)
+        if (character.isGrounded && animator.GetBool("Fall"))
         {
-            animator.SetTrigger("Land");
-            jumped = false;
+            animator.SetBool("Fall", false);
+            animator.SetBool("Land", true);
         }
 
-        if (Input.GetButtonDown("Jump") && character.isGrounded)
+        if (animator.GetBool("Land") && animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
+        {
+            animator.SetBool("Land", false);
+        }
+
+        if (Input.GetButtonDown("Jump") && character.isGrounded && !animator.GetBool("Land") && !animator.GetBool("Roll"))
         {
             velocity.y += Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y);
-            animator.SetTrigger("Jump");
-            jumped = true;
+            animator.SetBool("Jump", true);
         }
     }
 
@@ -78,6 +93,8 @@ public class CharacterMovement : MonoBehaviour
         if (character.isGrounded && velocity.y < 0f)
             velocity.y = 0f;
 
-        velocity += Physics.gravity * Time.deltaTime;
+        velocity += Physics.gravity * Time.fixedDeltaTime;
+
+        character.Move(velocity * Time.fixedDeltaTime);
     }
 }
