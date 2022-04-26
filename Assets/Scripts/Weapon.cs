@@ -10,7 +10,7 @@ public class Weapon : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         Entity entity = other.GetComponent<Entity>();
-        if (!entity)
+        if (!entity || entity.gameObject == owner.gameObject)
             return;
 
         entity.ChangeHealth(-damage);

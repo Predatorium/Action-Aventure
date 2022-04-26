@@ -22,8 +22,11 @@ public class CharacterMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Jump();
-        Move();
+        if (animator.GetInteger("Attack") == 0)
+        {
+            Jump();
+            Move();
+        }
     }
 
     private void FixedUpdate()
@@ -64,11 +67,8 @@ public class CharacterMovement : MonoBehaviour
 
     private void Jump()
     {
-        if (!character.isGrounded && character.velocity.y < 0)
-        {
-            animator.SetBool("Jump", false);
-            animator.SetBool("Fall", true);
-        }
+        if (animator.GetBool("Land"))
+            animator.SetBool("Land", false);
 
         if (character.isGrounded && animator.GetBool("Fall"))
         {
@@ -76,9 +76,10 @@ public class CharacterMovement : MonoBehaviour
             animator.SetBool("Land", true);
         }
 
-        if (animator.GetBool("Land") && animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
+        if (!character.isGrounded && character.velocity.y < 0)
         {
-            animator.SetBool("Land", false);
+            animator.SetBool("Jump", false);
+            animator.SetBool("Fall", true);
         }
 
         if (Input.GetButtonDown("Jump") && character.isGrounded && !animator.GetBool("Land") && !animator.GetBool("Roll"))

@@ -26,6 +26,9 @@ public class CamFollow : MonoBehaviour
             angle.x = 40;
         }
 
+        if (angle.z != 0f)
+            angle.z = 0f;
+
         transform.eulerAngles = angle;
     }
 }
