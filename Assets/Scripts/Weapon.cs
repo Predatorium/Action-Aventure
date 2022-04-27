@@ -5,12 +5,11 @@ using UnityEngine;
 public class Weapon : MonoBehaviour
 {
     [SerializeField] private int damage = 0;
-    public Entity owner = null;
 
     private void OnTriggerEnter(Collider other)
     {
         Entity entity = other.GetComponent<Entity>();
-        if (!entity || entity.gameObject == owner.gameObject)
+        if (!entity)
             return;
 
         entity.ChangeHealth(-damage);

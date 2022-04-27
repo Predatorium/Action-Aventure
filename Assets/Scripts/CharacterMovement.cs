@@ -16,7 +16,7 @@ public class CharacterMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        
     }
 
     // Update is called once per frame
@@ -38,16 +38,20 @@ public class CharacterMovement : MonoBehaviour
     {
         Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
 
-        if (move.sqrMagnitude > 0f && !animator.GetBool("Roll") && !animator.GetBool("Land"))
+        if (move.sqrMagnitude > 0f)
         {
-            transform.rotation = Quaternion.Euler(0f, followTarget.eulerAngles.y, 0f);
-            followTarget.localEulerAngles = new Vector3(followTarget.localEulerAngles.x, 0f, 0f);
-
-            Vector3 dir = (transform.right * move.x + transform.forward * move.z).normalized;
-            character.Move(dir * speed * Time.deltaTime);
             animator.SetBool("Run", true);
 
-            modele.LookAt(transform.position + new Vector3(dir.x, 0f, dir.z));
+            if (!animator.GetBool("Roll") && !animator.GetBool("Land"))
+            {
+                transform.rotation = Quaternion.Euler(0f, followTarget.eulerAngles.y, 0f);
+                followTarget.localEulerAngles = new Vector3(followTarget.localEulerAngles.x, 0f, 0f);
+
+                Vector3 dir = (transform.right * move.x + transform.forward * move.z).normalized;
+                character.Move(dir * speed * Time.deltaTime);
+
+                modele.LookAt(transform.position + new Vector3(dir.x, 0f, dir.z));
+            }
         }
         else
         {
@@ -59,10 +63,18 @@ public class CharacterMovement : MonoBehaviour
             animator.SetBool("Roll", true);
 
         if (animator.GetBool("Roll"))
+        {
             character.Move(modele.forward * speed * Time.deltaTime);
+            character.center = Vector3.up * 0.45f;
+            character.height = 0.9f;
+        }
 
         if (GameManager.AnimIsFinish(animator, "Roll"))
+        {
             animator.SetBool("Roll", false);
+            character.center = Vector3.up * 0.9f;
+            character.height = 1.8f;
+        }
     }
 
     private void Jump()

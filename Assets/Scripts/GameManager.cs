@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         current = this;
+        GameManager.MouseFocus(false, CursorLockMode.Locked);
     }
 
     // Start is called before the first frame update
@@ -30,10 +31,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    static public void MouseFocus(bool visible, CursorLockMode lockMode)
+    {
+        Cursor.lockState = lockMode;
+        Cursor.visible = visible;
+    }
+
     public void OnPause(bool pause)
     {
         Time.timeScale = pause ? 0f : 1f;
         screenPause.SetActive(pause);
+        MouseFocus(pause, pause ? CursorLockMode.None : CursorLockMode.Locked);
     }
 
     public void ReturnMenu()

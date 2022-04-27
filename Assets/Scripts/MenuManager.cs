@@ -10,6 +10,7 @@ public class MenuManager : MonoBehaviour
     private void Awake()
     {
         settings.Load();
+        GameManager.MouseFocus(true, CursorLockMode.None);
     }
 
     public void OnPlayer()

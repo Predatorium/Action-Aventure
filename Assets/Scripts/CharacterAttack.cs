@@ -26,21 +26,12 @@ public class CharacterAttack : Entity
 
         base.Update();
 
-        if (Input.GetButtonDown("Attack") && attack == null && controller.isGrounded)
+        if (Input.GetButtonDown("Attack") && controller.isGrounded)
         {
-            attack = StartCoroutine(Attack());
-        }
-    }
-
-    private IEnumerator Attack()
-    {
-        animator.SetInteger("Attack", 1);
-        yield return null;
-        while (animator.GetInteger("Attack") == 1)
-        {
-            if (Input.GetButtonDown("Attack"))
+            if (animator.GetInteger("Attack") == 0)
+                animator.SetInteger("Attack", 1);
+            else if (TimeAttack(0.6f, 1f, "SlashOut"))
                 animator.SetInteger("Attack", 2);
-            yield return null;
         }
     }
 

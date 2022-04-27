@@ -45,13 +45,22 @@ public class Enemy : Entity
         else
         {
             animator.SetBool("Run", false);
-        }
 
+            Vector3 dirPlayer = (GameManager.current.character.transform.position - transform.position).normalized;
+            if (Physics.Raycast(transform.position + Vector3.up * agent.height / 2f, dirPlayer, out RaycastHit hit) && Vector3.Dot(transform.forward, dirPlayer) >= 0.7f)
+            {
+                CharacterAttack character = hit.collider.GetComponent<CharacterAttack>();
+                if (character)
+                    target = character;
+            }
+        }
     }
 
     public override void ChangeHealth(int _life)
     {
         base.ChangeHealth(_life);
+
+        target = GameManager.current.character as CharacterAttack;
     }
 
     protected override IEnumerator Diying()

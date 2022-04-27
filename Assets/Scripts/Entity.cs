@@ -8,7 +8,6 @@ public class Entity : MonoBehaviour
     [SerializeField] protected Weapon weapon = null;
     [SerializeField] protected int maxLife = 0;
     protected int life = 0;
-    protected Coroutine attack = null;
 
     protected virtual void Awake()
     {
@@ -32,7 +31,6 @@ public class Entity : MonoBehaviour
         {
             animator.SetInteger("Attack", 0);
             weapon.gameObject.SetActive(false);
-            attack = null;
         }
 
         if (AnimIsFinish("React"))
