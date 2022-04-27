@@ -5,7 +5,7 @@ using UnityEngine;
 public class CharacterAttack : Entity
 {
     [SerializeField] private CharacterController controller = null;
-    private Coroutine attack = null;
+    [SerializeField] private CharacterMovement movement = null;
 
     protected override void Awake()
     {
@@ -21,26 +21,22 @@ public class CharacterAttack : Entity
     // Update is called once per frame
     protected override void Update()
     {
-        if (animator.GetInteger("Attack") > 0 && animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
-        {
-            animator.SetInteger("Attack", 0);
-            attack = null;
-        }
+        if (animator.GetBool("Roll") || animator.GetBool("Land"))
+            return;
 
-        if (animator.GetBool("React"))
-            animator.SetBool("React", false);
+        base.Update();
 
         if (Input.GetButtonDown("Attack") && attack == null && controller.isGrounded)
         {
-            attack = StartCoroutine(Attack(0f));
+            attack = StartCoroutine(Attack());
         }
     }
 
-    private IEnumerator Attack(float delay)
+    private IEnumerator Attack()
     {
         animator.SetInteger("Attack", 1);
         yield return null;
-        while (animator.GetInteger("Attack") == 1 && animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)
+        while (animator.GetInteger("Attack") == 1)
         {
             if (Input.GetButtonDown("Attack"))
                 animator.SetInteger("Attack", 2);
@@ -51,21 +47,15 @@ public class CharacterAttack : Entity
     public override void ChangeHealth(int _life)
     {
         base.ChangeHealth(_life);
-
-        if (life == 0)
-            StartCoroutine(Diying());
-        else
-            animator.SetBool("React", true);
     }
 
-    private IEnumerator Diying()
+    protected override IEnumerator Diying()
     {
         animator.SetBool("Die", true);
-        while (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)
-        {
-
-
+        while (GameManager.AnimIsNotFinish(animator, "Die"))
             yield return null;
-        }
+
+        Destroy(movement);
+        Destroy(this);
     }
 }

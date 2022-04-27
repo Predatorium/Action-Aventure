@@ -39,7 +39,7 @@ ModelImporter:
       name: Stable Sword Inward Slash
       takeName: mixamo.com
       internalID: 0
-      firstFrame: 0
+      firstFrame: 30
       lastFrame: 47
       wrapMode: 0
       orientationOffsetY: 0

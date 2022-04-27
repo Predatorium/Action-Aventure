@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CamFollow : MonoBehaviour
 {
-    [SerializeField] private float rotationSpeed = 10f;
     // Start is called before the first frame update
     void Start()
     {
@@ -14,7 +13,7 @@ public class CamFollow : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.eulerAngles += new Vector3(Input.GetAxis("Mouse Y"), Input.GetAxis("Mouse X"), 0f) * Time.deltaTime * rotationSpeed;
+        transform.eulerAngles += new Vector3(Input.GetAxis("Rot Y"), Input.GetAxis("Rot X"), 0f) * Time.deltaTime * GameManager.current.settings.sensibility;
         Vector3 angle = transform.eulerAngles;
 
         if (angle.x > 180 && angle.x < 340)

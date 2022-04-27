@@ -22,11 +22,11 @@ public class CharacterMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (animator.GetInteger("Attack") == 0)
-        {
-            Jump();
-            Move();
-        }
+        if (animator.GetInteger("Attack") != 0)
+            return;
+
+        Jump();
+        Move();
     }
 
     private void FixedUpdate()
@@ -38,7 +38,7 @@ public class CharacterMovement : MonoBehaviour
     {
         Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
 
-        if (move.sqrMagnitude > 0f && !animator.GetBool("Roll"))
+        if (move.sqrMagnitude > 0f && !animator.GetBool("Roll") && !animator.GetBool("Land"))
         {
             transform.rotation = Quaternion.Euler(0f, followTarget.eulerAngles.y, 0f);
             followTarget.localEulerAngles = new Vector3(followTarget.localEulerAngles.x, 0f, 0f);
@@ -61,13 +61,13 @@ public class CharacterMovement : MonoBehaviour
         if (animator.GetBool("Roll"))
             character.Move(modele.forward * speed * Time.deltaTime);
 
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Roll") && animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
+        if (GameManager.AnimIsFinish(animator, "Roll"))
             animator.SetBool("Roll", false);
     }
 
     private void Jump()
     {
-        if (animator.GetBool("Land"))
+        if (GameManager.AnimIsFinish(animator, "Land") || !animator.GetCurrentAnimatorStateInfo(0).IsName("Land"))
             animator.SetBool("Land", false);
 
         if (character.isGrounded && animator.GetBool("Fall"))
