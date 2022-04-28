@@ -154,6 +154,8 @@ MonoBehaviour:
   maxLife: 25
   agent: {fileID: 3145718770608171551}
   target: {fileID: 0}
+  distancePath: {x: 3, y: 7}
+  inactiveTime: {x: 4, y: 10}
 --- !u!195 &3145718770608171551
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -334,7 +336,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 20
-  owner: {fileID: 3528591671676626788}
 --- !u!1 &1394300936195137761
 GameObject:
   m_ObjectHideFlags: 0

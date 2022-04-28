@@ -44,7 +44,8 @@ public class Entity : MonoBehaviour
 
     protected bool TimeAttack(float min, float max, string name)
     {
-        return animator.GetCurrentAnimatorStateInfo(0).IsName(name) && animator.GetCurrentAnimatorStateInfo(0).normalizedTime > min && animator.GetCurrentAnimatorStateInfo(0).normalizedTime < max;
+        return animator.GetCurrentAnimatorStateInfo(0).IsName(name) && animator.GetCurrentAnimatorStateInfo(0).normalizedTime > min &&
+            animator.GetCurrentAnimatorStateInfo(0).normalizedTime < max && !animator.IsInTransition(0);
     }
 
     public float GetPourcentageLife()
@@ -63,12 +64,22 @@ public class Entity : MonoBehaviour
             return;
         
         if (life == 0)
-            StartCoroutine(Diying());
+            GameManager.current.StartCoroutine(Diying(animator));
         else
             animator.SetTrigger("React");
     }
 
-    protected virtual IEnumerator Diying()
+    public void ResetAnimator()
+    {
+        animator.SetInteger("Attack", 0);
+        animator.SetBool("Roll", false);
+        animator.SetBool("Jump", false);
+        animator.SetBool("Fall", false);
+        animator.SetBool("Land", false);
+        animator.SetBool("Run", false);
+    }
+
+    protected virtual IEnumerator Diying(Animator _animator)
     {
         yield return null;
     }

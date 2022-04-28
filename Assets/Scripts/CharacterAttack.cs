@@ -40,13 +40,13 @@ public class CharacterAttack : Entity
         base.ChangeHealth(_life);
     }
 
-    protected override IEnumerator Diying()
+    protected override IEnumerator Diying(Animator _animator)
     {
-        animator.SetBool("Die", true);
-        while (GameManager.AnimIsNotFinish(animator, "Die"))
-            yield return null;
-
+        _animator.SetBool("Die", true);
         Destroy(movement);
         Destroy(this);
+
+        while (GameManager.AnimIsNotFinish(_animator, "Die"))
+            yield return null;
     }
 }

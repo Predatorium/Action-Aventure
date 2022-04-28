@@ -14,7 +14,7 @@ public class SettingsManager : MonoBehaviour
     private void Awake()
     {
         slider.value = settings.sensibility;
-        text.text = settings.sensibility.ToString();
+        text.text = (settings.sensibility / 40f).ToString();
 
         toggle.isOn = settings.fullscreen;
     }
@@ -43,7 +43,7 @@ public class SettingsManager : MonoBehaviour
 
     public void ChangeSensibility(float value)
     {
-        settings.sensibility = value;
+        settings.sensibility = value * 40;
         text.text = value.ToString();
     }
 

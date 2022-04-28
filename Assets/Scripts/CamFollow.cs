@@ -13,7 +13,7 @@ public class CamFollow : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.eulerAngles += new Vector3(Input.GetAxis("Rot Y"), Input.GetAxis("Rot X"), 0f) * Time.deltaTime * GameManager.current.settings.sensibility;
+        transform.eulerAngles += new Vector3(-Input.GetAxis("Rot Y"), Input.GetAxis("Rot X"), 0f) * Time.deltaTime * GameManager.current.settings.sensibility;
         Vector3 angle = transform.eulerAngles;
 
         if (angle.x > 180 && angle.x < 340)

@@ -64,7 +64,7 @@ public class CharacterMovement : MonoBehaviour
 
         if (animator.GetBool("Roll"))
         {
-            character.Move(modele.forward * speed * Time.deltaTime);
+            character.Move(modele.forward * speed * 1.5f * Time.deltaTime);
             character.center = Vector3.up * 0.45f;
             character.height = 0.9f;
         }
