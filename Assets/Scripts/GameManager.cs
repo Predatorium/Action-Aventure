@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     {
         current = this;
         GameManager.MouseFocus(false, CursorLockMode.Locked);
+        Time.timeScale = 1f;
     }
 
     // Start is called before the first frame update
@@ -33,6 +34,9 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!current)
+            current = this;
+
         if (Input.GetButtonDown("Pause"))
         {
             OnPause(!screenPause.activeSelf);
@@ -80,18 +84,23 @@ public class GameManager : MonoBehaviour
 
     public void LooseQTE()
     {
+        Enemy boss = enemies.Where(e => e.boss).First();
+        boss.HealBoss();
+        boss.LooseQTE(5f);
         ActiveQTE(false);
     }
 
     public void WinQTE()
     {
+        Enemy boss = enemies.Where(e => e.boss).First();
+        boss.StartCoroutine(boss.Diying(boss.GetComponent<Animator>()));
         ActiveQTE(false);
         StartCoroutine(EndWin());
     }
 
     private IEnumerator EndWin()
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(10f);
         SceneManager.LoadScene("Menu");
     }
 
@@ -103,7 +112,6 @@ public class GameManager : MonoBehaviour
 
     public static bool AnimIsNotFinish(Animator animator, string name)
     {
-        return (animator.GetCurrentAnimatorStateInfo(0).IsName(name) || animator.GetNextAnimatorStateInfo(0).IsName(name))
-            && animator.GetCurrentAnimatorStateInfo(0).normalizedTime <= 1f && !animator.IsInTransition(0);
+        return (animator.GetCurrentAnimatorStateInfo(0).IsName(name) || animator.GetNextAnimatorStateInfo(0).IsName(name));
     }
 }

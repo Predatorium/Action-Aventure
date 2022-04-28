@@ -22,7 +22,7 @@ public class CharacterMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (animator.GetInteger("Attack") != 0)
+        if (animator.GetInteger("Attack") != 0 || GameManager.AnimIsNotFinish(animator, "React"))
             return;
 
         Jump();
@@ -54,10 +54,7 @@ public class CharacterMovement : MonoBehaviour
             }
         }
         else
-        {
             animator.SetBool("Run", false);
-            velocity = Vector3.up * velocity.y;
-        }
 
         if (Input.GetButtonDown("Roll"))
             animator.SetBool("Roll", true);
@@ -82,22 +79,16 @@ public class CharacterMovement : MonoBehaviour
         if (GameManager.AnimIsFinish(animator, "Land") || !animator.GetCurrentAnimatorStateInfo(0).IsName("Land"))
             animator.SetBool("Land", false);
 
-        if (character.isGrounded && animator.GetBool("Fall"))
-        {
-            animator.SetBool("Fall", false);
+        if (character.isGrounded && animator.GetCurrentAnimatorStateInfo(0).IsName("Fall"))
             animator.SetBool("Land", true);
-        }
 
-        if (!character.isGrounded && character.velocity.y < 0)
-        {
-            animator.SetBool("Jump", false);
-            animator.SetBool("Fall", true);
-        }
+        if (!character.isGrounded && character.velocity.y < -4f)
+            animator.SetTrigger("Fall");
 
         if (Input.GetButtonDown("Jump") && character.isGrounded && !animator.GetBool("Land") && !animator.GetBool("Roll"))
         {
             velocity.y += Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y);
-            animator.SetBool("Jump", true);
+            animator.SetTrigger("Jump");
         }
     }
 

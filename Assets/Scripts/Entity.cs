@@ -23,18 +23,15 @@ public class Entity : MonoBehaviour
     // Update is called once per frame
     protected virtual void Update()
     {
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("SlashIn") || TimeAttack(0.46f, 0.6f, "SlashOut"))
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("SlashIn") ||
+            TimeAttack(0.46f, 0.6f, "SlashOut") && !animator.IsInTransition(0))
             weapon.gameObject.SetActive(true);
-
-        if (AnimIsFinish("SlashIn") || AnimIsFinish("SlashOut") || animator.GetCurrentAnimatorStateInfo(0).IsName("React")
-            || animator.GetCurrentAnimatorStateInfo(0).IsName("Diying"))
-        {
-            animator.SetInteger("Attack", 0);
+        else
             weapon.gameObject.SetActive(false);
-        }
 
-        if (AnimIsFinish("React"))
-            animator.SetBool("React", false);
+        if ((animator.GetInteger("Attack") == 1 && AnimIsFinish("SlashOut")) ||
+            (animator.GetInteger("Attack") == 2 && AnimIsFinish("SlashIn")))
+            animator.SetInteger("Attack", 0);
     }
 
     protected bool AnimIsFinish(string name)
@@ -53,6 +50,11 @@ public class Entity : MonoBehaviour
         return (float)life / (float)maxLife;
     }
 
+    public void HealBoss()
+    {
+        life = (int)((float)maxLife * 0.25f);
+    }
+
     public virtual void ChangeHealth(int _life)
     {
         if (_life < 0 && TimeAttack(0.35f, 0.65f, "Roll"))
@@ -62,11 +64,16 @@ public class Entity : MonoBehaviour
 
         if (_life > 0)
             return;
-        
+
+        ResetAnimator();
+
         if (life == 0)
             GameManager.current.StartCoroutine(Diying(animator));
         else
             animator.SetTrigger("React");
+
+        animator.SetInteger("Attack", 0);
+        weapon.gameObject.SetActive(false);
     }
 
     public void ResetAnimator()
@@ -77,9 +84,11 @@ public class Entity : MonoBehaviour
         animator.SetBool("Fall", false);
         animator.SetBool("Land", false);
         animator.SetBool("Run", false);
+        animator.ResetTrigger("React");
+        animator.ResetTrigger("Die");
     }
 
-    protected virtual IEnumerator Diying(Animator _animator)
+    public virtual IEnumerator Diying(Animator _animator)
     {
         yield return null;
     }

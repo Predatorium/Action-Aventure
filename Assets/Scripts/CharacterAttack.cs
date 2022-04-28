@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CharacterAttack : Entity
 {
@@ -30,7 +31,7 @@ public class CharacterAttack : Entity
         {
             if (animator.GetInteger("Attack") == 0)
                 animator.SetInteger("Attack", 1);
-            else if (TimeAttack(0.6f, 1f, "SlashOut"))
+            else if (TimeAttack(0.4f, 1f, "SlashOut"))
                 animator.SetInteger("Attack", 2);
         }
     }
@@ -40,13 +41,16 @@ public class CharacterAttack : Entity
         base.ChangeHealth(_life);
     }
 
-    protected override IEnumerator Diying(Animator _animator)
+    public override IEnumerator Diying(Animator _animator)
     {
-        _animator.SetBool("Die", true);
+        _animator.SetTrigger("Die");
         Destroy(movement);
         Destroy(this);
 
-        while (GameManager.AnimIsNotFinish(_animator, "Die"))
+        yield return null;
+        while (GameManager.AnimIsNotFinish(_animator, "Diying"))
             yield return null;
+
+        SceneManager.LoadScene("Game");
     }
 }

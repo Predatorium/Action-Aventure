@@ -6,6 +6,7 @@ public class Weapon : MonoBehaviour
 {
     [SerializeField] private int damage = 0;
 
+
     private void OnTriggerEnter(Collider other)
     {
         Entity entity = other.GetComponent<Entity>();
