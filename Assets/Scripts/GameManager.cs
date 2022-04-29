@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     public Settings settings = null;
     public List<Enemy> enemies = new List<Enemy>();
     [SerializeField] private CinemachineDollyCart cart;
-    [SerializeField] private GameObject cinematiqueCam = null;
+    public GameObject cinematiqueCam = null;
     [SerializeField] private GameObject targetCamPlayer = null;
     [SerializeField] private GameObject camQTEBoss = null;
     [SerializeField] private GameObject uiQTE = null;
@@ -100,13 +100,13 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator EndWin()
     {
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForSeconds(5f);
         SceneManager.LoadScene("Menu");
     }
 
     public static bool AnimIsFinish(Animator animator, string name)
     {
-        return animator.GetCurrentAnimatorStateInfo(0).IsName(name) && animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f
+        return animator.GetCurrentAnimatorStateInfo(0).IsName(name) && animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1f
             && !animator.IsInTransition(0);
     }
 

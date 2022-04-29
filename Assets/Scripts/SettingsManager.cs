@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class SettingsManager : MonoBehaviour
 {
@@ -10,10 +11,11 @@ public class SettingsManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI text = null;
     [SerializeField] private Slider slider = null;
     [SerializeField] private Toggle toggle = null;
+    [SerializeField] private EventSystem system = null;
 
     private void Awake()
     {
-        slider.value = settings.sensibility;
+        slider.value = settings.sensibility / 40f;
         text.text = (settings.sensibility / 40f).ToString();
 
         toggle.isOn = settings.fullscreen;
@@ -38,6 +40,7 @@ public class SettingsManager : MonoBehaviour
 
     private void OnEnable()
     {
+        system.SetSelectedGameObject(slider.gameObject);
         settings.Load();
     }
 

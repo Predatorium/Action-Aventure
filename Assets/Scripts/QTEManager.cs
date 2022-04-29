@@ -51,6 +51,20 @@ public class QTEManager : MonoBehaviour
                 successQTE++;
                 timeQTE = 0f;
             }
+            else
+            {
+                foreach (QTE current in qtes)
+                {
+                    if (Input.GetButtonDown(current.inputName))
+                    {
+                        currentQTE.UI.gameObject.SetActive(false);
+                        timeQTE = 0f;
+                        successQTE = 0;
+                        currentQTE = null;
+                        GameManager.current.LooseQTE();
+                    }
+                }
+            }
 
             if (timeQTE >= intervalQTE)
             {

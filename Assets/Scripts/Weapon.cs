@@ -13,6 +13,6 @@ public class Weapon : MonoBehaviour
         if (!entity)
             return;
 
-        entity.ChangeHealth(-damage);
+        entity.ChangeHealth(-damage, true);
     }
 }

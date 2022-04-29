@@ -25,7 +25,6 @@ public class CharacterMovement : MonoBehaviour
         if (animator.GetInteger("Attack") != 0 || GameManager.AnimIsNotFinish(animator, "React"))
             return;
 
-        Jump();
         Move();
     }
 
@@ -36,13 +35,13 @@ public class CharacterMovement : MonoBehaviour
 
     private void Move()
     {
-        Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
+        Vector3 move = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
 
         if (move.sqrMagnitude > 0f)
         {
             animator.SetBool("Run", true);
 
-            if (!animator.GetBool("Roll") && !animator.GetBool("Land"))
+            if (!animator.GetBool("Roll"))
             {
                 transform.rotation = Quaternion.Euler(0f, followTarget.eulerAngles.y, 0f);
                 followTarget.localEulerAngles = new Vector3(followTarget.localEulerAngles.x, 0f, 0f);
@@ -71,24 +70,6 @@ public class CharacterMovement : MonoBehaviour
             animator.SetBool("Roll", false);
             character.center = Vector3.up * 0.9f;
             character.height = 1.8f;
-        }
-    }
-
-    private void Jump()
-    {
-        if (GameManager.AnimIsFinish(animator, "Land") || !animator.GetCurrentAnimatorStateInfo(0).IsName("Land"))
-            animator.SetBool("Land", false);
-
-        if (character.isGrounded && animator.GetCurrentAnimatorStateInfo(0).IsName("Fall"))
-            animator.SetBool("Land", true);
-
-        if (!character.isGrounded && character.velocity.y < -4f)
-            animator.SetTrigger("Fall");
-
-        if (Input.GetButtonDown("Jump") && character.isGrounded && !animator.GetBool("Land") && !animator.GetBool("Roll"))
-        {
-            velocity.y += Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y);
-            animator.SetTrigger("Jump");
         }
     }
 

@@ -23,8 +23,7 @@ public class Entity : MonoBehaviour
     // Update is called once per frame
     protected virtual void Update()
     {
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("SlashIn") ||
-            TimeAttack(0.46f, 0.6f, "SlashOut") && !animator.IsInTransition(0))
+        if (TimeAttack(0f, 0.5f, "SlashIn") || TimeAttack(0.46f, 0.6f, "SlashOut") && !animator.IsInTransition(0))
             weapon.gameObject.SetActive(true);
         else
             weapon.gameObject.SetActive(false);
@@ -55,7 +54,7 @@ public class Entity : MonoBehaviour
         life = (int)((float)maxLife * 0.25f);
     }
 
-    public virtual void ChangeHealth(int _life)
+    public virtual void ChangeHealth(int _life, bool react)
     {
         if (_life < 0 && TimeAttack(0.35f, 0.65f, "Roll"))
             return;
@@ -69,8 +68,10 @@ public class Entity : MonoBehaviour
 
         if (life == 0)
             GameManager.current.StartCoroutine(Diying(animator));
-        else
+        else if (react)
             animator.SetTrigger("React");
+        else
+            return;
 
         animator.SetInteger("Attack", 0);
         weapon.gameObject.SetActive(false);
