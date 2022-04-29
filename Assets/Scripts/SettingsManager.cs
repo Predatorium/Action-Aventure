@@ -54,5 +54,6 @@ public class SettingsManager : MonoBehaviour
     {
         settings.fullscreen = isFull;
         Screen.fullScreen = settings.fullscreen;
+        Screen.SetResolution(1920, 1080, settings.fullscreen);
     }
 }
