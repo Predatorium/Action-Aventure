@@ -152,6 +152,16 @@ public class Enemy : Entity
         delayAttack = null;
     }
 
+    private void OnEnable()
+    {
+        gameObject.GetComponent<Collider>().enabled = true;
+    }
+
+    private void OnDisable()
+    {
+        gameObject.GetComponent<Collider>().enabled = false;
+    }
+
     private void PaternEnemyBase()
     {
         if (randPath != null)
@@ -246,6 +256,7 @@ public class Enemy : Entity
             Destroy(tmp.gameObject);
         }
 
+        gameObject.GetComponent<Collider>().enabled = false;
         GameManager.current.enemies.Remove(this);
         Destroy(agent);
         Destroy(this);
